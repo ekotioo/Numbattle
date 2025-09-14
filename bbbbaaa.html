@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permainan Strategi Angka 4 vs 4</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1, h2, h3 {
+            color: #f5f5f5;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 30px;
+        }
+        
+        .team-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .team {
+            width: 48%;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .team-a {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+            border: 2px solid #5c6bc0;
+        }
+        
+        .team-b {
+            background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #7b1fa2 100%);
+            border: 2px solid #9c27b0;
+        }
+        
+        .team-title {
+            text-align: center;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .player {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .player.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        
+        .player-name {
+            font-weight: bold;
+        }
+        
+        .player-you {
+            color: #ffeb3b;
+        }
+        
+        .round-number-section {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .round-numbers-wrapper {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .numbers-for-team {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #3a3a3a;
+        }
+
+        .numbers-for-team h4 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #f5f5f5;
+        }
+
+        .numbers-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .number {
+            width: 40px;
+            height: 40px;
+            background-color: #424242;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .number:hover {
+            transform: scale(1.1);
+            background-color: #616161;
+        }
+        
+        .number.selected {
+            background-color: #ff9800;
+            color: #000;
+        }
+        
+        .number.used {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #616161;
+        }
+        
+        .number.banned {
+            background-color: #f44336;
+            color: white;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #1565c0;
+        }
+        
+        button:disabled {
+            background-color: #424242;
+            cursor: not-allowed;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            max-width: 80%;
+            margin: 10px 0;
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background-color: #2d2d2d;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .score {
+            text-align: center;
+        }
+        
+        .current-round-text {
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+        
+        .game-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #252525;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .winner {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .final-results {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #4caf50;
+        }
+        
+        .timer {
+            text-align: center;
+            font-size: 24px;
+            margin: 15px 0;
+            color: #ff9800;
+        }
+        
+        .start-round-btn {
+            background-color: #2e7d32 !important;
+        }
+        
+        .start-round-btn:hover {
+            background-color: #388e3c !important;
+        }
+        
+        .highlight {
+            animation: highlight 0.5s;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: #ff9800; }
+            100% { background-color: #424242; }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+            animation: modalFadeIn 0.5s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal h2 {
+            color: #fff;
+            margin-top: 0;
+            font-size: 28px;
+        }
+        
+        .modal p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .modal button {
+            background-color: #ff9800;
+            color: #000;
+            font-weight: bold;
+            padding: 12px 24px;
+            font-size: 18px;
+            margin: 5px;
+        }
+        
+        .modal button:hover {
+            background-color: #ffb74d;
+        }
+        
+        .random-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            height: 80px;
+            background-color: #333;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff9800;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .team-total-points {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #bdbdbd;
+        }
+        
+        .custom-room-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .custom-room-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .custom-room-form input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .player-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .player-input-group {
+            margin-bottom: 10px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #333;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .tab-button.active {
+            background-color: #0d47a1;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-dialog {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .option-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .play-button {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .watch-button {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .team-momentum {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #bdbdbd;
+            font-style: italic;
+        }
+        
+        .momentum-high {
+            color: #4caf50;
+        }
+        
+        .momentum-low {
+            color: #f44336;
+        }
+        
+        .ban-phase {
+            background-color: #4a148c;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .ban-instruction {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #bdbdbd;
+        }
+        
+        .ban-number {
+            background-color: #f44336 !important;
+            color: white !important;
+        }
+        
+        .leaderboard {
+            margin-top: 20px;
+            background-color: #252525;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .leaderboard h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        .leaderboard-table th {
+            background-color: #333;
+        }
+        
+        .leaderboard-table tr:nth-child(even) {
+            background-color: #2d2d2d;
+        }
+        
+        .mvp-badge {
+            display: inline-block;
+            background-color: #ffd700;
+            color: #000;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .blunder {
+            animation: blunder 0.5s;
+            background-color: #f44336 !important;
+        }
+        
+        @keyframes blunder {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .pause-btn {
+            background-color: #ff9800 !important;
+            color: #000 !important;
+            margin-left: 10px;
+        }
+        
+        .pause-btn:hover {
+            background-color: #ffb74d !important;
+        }
+        
+        .pause-btn:disabled {
+            background-color: #424242 !important;
+            color: #757575 !important;
+        }
+        
+        .back-to-lobby-btn {
+            background-color: #757575 !important;
+            margin-top: 10px;
+        }
+        
+        .back-to-lobby-btn:hover {
+            background-color: #9e9e9e !important;
+        }
+        
+        .ban-modal {
+            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+        }
+        
+        .pause-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .pause-timer {
+            font-size: 36px;
+            color: #ff9800;
+            margin-top: 20px;
+        }
+        
+        .pause-request-dialog {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .pause-request-dialog h2 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+
+        .pause-request-dialog p {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="startScreen">
+        <div class="start-screen">
+            <h1 id="gameTitleImage">
+                <img src="Gemini_Generated_Image_4f5hoc4f5hoc4f5h.png" style="max-width: 100%; height: auto;">
+            </h1>
+            <h2>Online Game PvP 4 vs 4</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab('normalTab')">Normal Game</button>
+                <button class="tab-button" onclick="openTab('customTab')">Custom Room</button>
+            </div>
+            
+            <div id="normalTab" class="tab-content active">
+                <p>Masukkan nama Anda untuk memulai permainan:</p>
+                <input type="text" id="playerName" placeholder="Nama Anda">
+                <button id="startGameBtn">Mulai Permainan</button>
+            </div>
+            
+            <div id="customTab" class="tab-content">
+                <div class="custom-room-form">
+                    <div>
+                        <label for="teamAName">Nama Team A:</label>
+                        <input type="text" id="teamAName" placeholder="Team A" value="Team A">
+                    </div>
+                    <div>
+                        <label for="teamBName">Nama Team B:</label>
+                        <input type="text" id="teamBName" placeholder="Team B" value="Team B">
+                    </div>
+                    
+                    <div class="player-inputs">
+                        <div>
+                            <h4>Team A Players</h4>
+                            <div class="player-input-group">
+                                <input type="text" id="teamAPlayer1" placeholder="Player 1" value="Player A1">
+                            </div>
+                            <div class="player-input-group">
+                                <input type="text" id="teamAPlayer2" placeholder="Player 2" value="Player A2">
+                            </div>
+                            <div class="player-input-group">
+                                <input type="text" id="teamAPlayer3" placeholder="Player 3" value="Player A3">
+                            </div>
+                            <div class="player-input-group">
+                                <input type="text" id="teamAPlayer4" placeholder="Player 4" value="Player A4">
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Team B Players</h4>
+                            <div class="player-input-group">
+                                <input type="text" id="teamBPlayer1" placeholder="Player 1" value="Player B1">
+                            </div>
+                            <div class="player-input-group">
+                                <input type="text" id="teamBPlayer2" placeholder="Player 2" value="Player B2">
+                            </div>
+                            <div class="player-input-group">
+                                <input type="text" id="teamBPlayer3" placeholder="Player 3" value="Player B3">
+                            </div>
+                            <div class="player-input-group">
+                                <input type="text" id="teamBPlayer4" placeholder="Player 4" value="Player B4">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="createCustomRoomBtn">Buat Custom Room</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="gameScreen" style="display: none;">
+        <div id="pauseScreen" class="pause-screen" style="display: none;">
+            <h2>GAME PAUSED</h2>
+            <div class="pause-timer" id="pauseTimer">10</div>
+            <p>Momentum direset...</p>
+        </div>
+        
+        <h1 id="gameTitleImage">
+            <img src="Gemini_Generated_Image_4f5hoc4f5hoc4f5hs.png" style="max-width: 100%; height: auto;">
+        </h1>
+        
+        <div class="scoreboard">
+            <div class="score">
+                <h3 class="team-title" id="teamATitleDisplay">Team A</h3>
+                <div id="teamAScore">0</div>
+            </div>
+            <div class="score">
+                <h3>Ronde <span id="currentRound">1</span>/12</h3>
+            </div>
+            <div class="score">
+                <h3 class="team-title" id="teamBTitleDisplay">Team B</h3>
+                <div id="teamBScore">0</div>
+            </div>
+        </div>
+        
+        <div class="timer" id="timer">00:06</div>
+        
+        <div id="banPhase" class="ban-phase" style="display: none;">
+            <h3>FASE BAN ANGKA</h3>
+            <p id="banPhaseMessage">Team B sedang memilih angka untuk di-ban</p>
+            <p class="ban-instruction">Pilih angka yang ingin dilarang untuk digunakan lawan di ronde ini</p>
+            <div class="timer" id="banTimer">00:06</div>
+        </div>
+        
+        <div class="round-number-section">
+            <h3 class="current-round-text">Angka Ronde Ini</h3>
+            <div class="round-numbers-wrapper">
+                <div class="numbers-for-team team-a-numbers">
+                    <h4 id="numbersTeamATitle">Angka Team A</h4>
+                    <div id="numbersContainerA" class="numbers-container"></div>
+                </div>
+                <div class="numbers-for-team team-b-numbers">
+                    <h4 id="numbersTeamBTitle">Angka Team B</h4>
+                    <div id="numbersContainerB" class="numbers-container"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="team-container">
+            <div class="team team-a">
+                <h3 class="team-title" id="teamADisplay">Team A</h3>
+                <div id="teamAPlayers"></div>
+                <div id="teamATotal">Total: 0</div>
+                <div id="teamATotalPoints" class="team-total-points">Total Poin: 0</div>
+                <div id="teamAMomentum" class="team-momentum"></div>
+                <div id="teamAPauseCount">Pause tersedia: 2</div>
+            </div>
+            
+            <div class="team team-b">
+                <h3 class="team-title" id="teamBDisplay">Team B</h3>
+                <div id="teamBPlayers"></div>
+                <div id="teamBTotal">Total: 0</div>
+                <div id="teamBTotalPoints" class="team-total-points">Total Poin: 0</div>
+                <div id="teamBMomentum" class="team-momentum"></div>
+                <div id="teamBPauseCount">Pause tersedia: 2</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="startRoundBtn" class="start-round-btn">Mulai Ronde</button>
+            <button id="confirmBtn" disabled>Konfirmasi Pilihan</button>
+            <button id="banBtn" style="display: none;">Ban Angka Terpilih</button>
+            <button id="nextRoundBtn" disabled>Ronde Berikutnya</button>
+            <button id="pauseRequestBtn" class="pause-btn" disabled>Request Pause (2)</button>
+        </div>
+        
+        <div class="controls">
+            <button id="backToLobbyBtn" class="back-to-lobby-btn">Kembali ke Lobby</button>
+        </div>
+        
+        <div class="game-log">
+            <h3>Catatan Permainan</h3>
+            <div id="gameLog"></div>
+        </div>
+        
+        <div id="finalResults" class="final-results" style="display: none;"></div>
+        
+        <div id="leaderboard" class="leaderboard" style="display: none;">
+            <h3>Leaderboard</h3>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Peringkat</th>
+                        <th>Nama Pemain</th>
+                        <th>Team</th>
+                        <th>Total Angka</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Selamat!</h2>
+            <p id="modalMessage">Team A memenangkan permainan!</p>
+            <button id="modalCloseBtn">Tutup</button>
+            <button id="showLeaderboardBtn">Lihat Leaderboard</button>
+        </div>
+    </div>
+
+    <div id="playModeModal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog">
+            <h2>Pilih Mode Bermain</h2>
+            <p>Anda ingin bermain sebagai pemain atau hanya menonton?</p>
+            <div class="modal-options">
+                <button class="option-button play-button" id="playAsPlayerBtn">Bermain</button>
+                <button class="option-button watch-button" id="watchOnlyBtn">Menonton</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="selectPlayerModal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog">
+            <h2>Pilih Pemain</h2>
+            <p>Pilih pemain yang ingin Anda mainkan:</p>
+            <div id="playerSelectionOptions"></div>
+        </div>
+    </div>
+
+    <div id="startingTeamModal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog">
+            <h2 id="startingTeamModalTitle">Memilih Tim yang Memulai</h2>
+            <p id="startingTeamModalMessage">Team A akan memulai pertama di Ronde 1.</p>
+            <button id="startingTeamModalCloseBtn">Lanjutkan</button>
+        </div>
+    </div>
+
+    <div id="banModal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog ban-modal">
+            <h2 id="banModalTitle">Angka Dilarang!</h2>
+            <p id="banModalMessage">Team B telah melarang penggunaan angka 5 di ronde ini!</p>
+            <button id="banModalCloseBtn">Lanjutkan</button>
+        </div>
+    </div>
+
+    <div id="pauseRequestModal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog pause-request-dialog">
+            <h2 id="pauseRequestModalTitle">Permintaan Pause!</h2>
+            <p id="pauseRequestModalMessage">Team A meminta pause untuk mereset momentum</p>
+            <div class="modal-options">
+                <button class="option-button play-button" id="acceptPauseBtnModal">Terima</button>
+                <button class="option-button watch-button" id="rejectPauseBtnModal">Tolak</button>
+            </div>
+            <div class="timer" id="pauseRequestModalTimer">05</div>
+        </div>
+    </div>
+
+    <script>
+        // Data permainan
+        const gameState = {
+            playerName: '',
+            playerTeam: '',
+            currentRound: 1,
+            maxRounds: 12,
+            totalPicksPerRound: 8, // 4 pemain per tim × 2 tim
+            teamAScore: 0,
+            teamBScore: 0,
+            teamATotalPoints: 0,
+            teamBTotalPoints: 0,
+            roundNumbers: [], // Angka untuk ronde ini
+            bannedNumbers: [], // Angka yang dilarang di ronde ini
+            teamAPicks: new Array(4).fill(null), // Penyimpanan pilihan Team A
+            teamBPicks: new Array(4).fill(null), // Penyimpanan pilihan Team B
+            selectedNumbers: new Set(), // Angka yang sudah dipilih (oleh siapa saja)
+            currentSelection: null, // Angka yang sedang dipilih pemain
+            gameStarted: false,
+            roundActive: false,
+            banPhase: false, // Sedang dalam fase ban
+            timer: 6, // Timer 6 detik
+            banTimer: 6, // Timer ban 6 detik
+            pauseTime: 10, // Durasi pause 10 detik
+            pauseRequestTime: 5, // Waktu untuk merespon pause request
+            timerInterval: null,
+            banTimerInterval: null,
+            pauseTimerInterval: null,
+            pauseRequestTimerInterval: null,
+            currentTurnTeam: null, // 'A' atau 'B'
+            currentTurnPlayerIndex: 0, // Index pemain yang sedang giliran (0-3)
+            picksTakenInRound: 0, // Jumlah pilihan yang sudah dilakukan
+            players: { // Daftar pemain
+                A: [],
+                B: []
+            },
+            playerPickingNow: null, // Nama pemain yang sedang memilih
+            lastRoundWinner: null, // Pemenang ronde sebelumnya
+            currentPlayerOrder: { // Urutan pemain untuk ronde ini
+                A: [],
+                B: []
+            },
+            customGame: false,
+            watchMode: false,
+            teamAName: 'Team A',
+            teamBName: 'Team B',
+            teamAMomentum: 0, // Momentum untuk Team A (-2 sampai +2)
+            teamBMomentum: 0, // Momentum untuk Team B (-2 sampai +2)
+            consecutiveWins: { // Kemenangan beruntun
+                A: 0,
+                B: 0
+            },
+            catchUpMode: false, // Mode mengejar ketertinggalan
+            firstPickTeam: null, // Tim yang memulai duluan di ronde ini
+            playerStats: { // Statistik pemain
+                A: [],
+                B: []
+            },
+            blunderChance: 0.1, // 10% chance untuk membuat blunder
+            pauseCount: { // Jumlah pause yang tersedia
+                A: 2,
+                B: 2
+            },
+            isPaused: false, // Status pause game
+            pauseRequested: false, // Status permintaan pause
+            pauseRequestTeam: null // Tim yang meminta pause
+        };
+
+        // Daftar nama bot
+        const botNames = [
+            "Andi", "Budi", "Citra", "Dewi", "Eka", "Fajar", "Gina", "Hendra", "Ika", "Joko",
+            "Kiki", "Lala", "Maya", "Nina", "Oki", "Puja", "Qori", "Raka", "Sinta", "Tina",
+            "Umi", "Vina", "Wawan", "Xena", "Yudi", "Zara", "Windah", "Dean", "Azizi", "Adel", 
+            "Basuki", "Prilly", "Allysa", "Anselma", "David", "Ricky", "Jayadi", "Anin", "Floriska", 
+            "Melody", "Jeki", "Hubner", "Marselinus", "Welly", "Sonia", "Hamdan", "Divo", "Delyn", 
+            "Fritzy", "Biyel", "Arap", "Luthfi", "Anthony", "Rezaldi", "Kuat", "Mursid", "Abi", 
+            "Regi", "Mandra", "Kimmy", "Fahrian", "Eliano", "Anggara", "Thia", "Kobo", "Zeta", 
+            "Eleanie", "Tretan", "Coki", "Radit", "Fiki", "Freya", "Cepio", "Megawati", "Bekti", 
+            "Tohir", "Tahir", "Oner", "Darren", "Ronaldo", "Messi", "Rafathar", "Athir", "Fadlan", 
+            "Hanni", "Danielle", "Lalisa", "Lee", "Dyland", "Erica", "Ignasius", "Muthe", "Shani", 
+            "Indira", "Gibran", "Bion", "Rasyah", "Mulyadi", "Rezha", "Priscilla", "Hendro", 
+            "Chryselle", "Trisna"
+        ];
+
+        // Inisialisasi event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('startGameBtn').addEventListener('click', startGame);
+            document.getElementById('createCustomRoomBtn').addEventListener('click', createCustomRoom);
+            document.getElementById('startRoundBtn').addEventListener('click', startRound);
+            document.getElementById('confirmBtn').addEventListener('click', confirmSelection);
+            document.getElementById('banBtn').addEventListener('click', confirmBan);
+            document.getElementById('nextRoundBtn').addEventListener('click', nextRound);
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('showLeaderboardBtn').addEventListener('click', showLeaderboard);
+            document.getElementById('playAsPlayerBtn').addEventListener('click', function() { selectPlayMode(false); });
+            document.getElementById('watchOnlyBtn').addEventListener('click', function() { selectPlayMode(true); });
+            document.getElementById('startingTeamModalCloseBtn').addEventListener('click', closeStartingTeamModal);
+            document.getElementById('banModalCloseBtn').addEventListener('click', closeBanModal);
+            document.getElementById('pauseRequestBtn').addEventListener('click', requestPause);
+            document.getElementById('acceptPauseBtnModal').addEventListener('click', acceptPause);
+            document.getElementById('rejectPauseBtnModal').addEventListener('click', rejectPause);
+            document.getElementById('backToLobbyBtn').addEventListener('click', backToLobby);
+            
+            document.getElementById('playerName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') startGame();
+            });
+        });
+
+        // Fungsi untuk membuka tab
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-button[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Fungsi untuk memulai permainan normal
+        function startGame() {
+            const nameInput = document.getElementById('playerName');
+            const name = nameInput.value.trim();
+            
+            if (name === '') {
+                alert('Silakan masukkan nama Anda!');
+                return;
+            }
+
+            gameState.playerName = name;
+            gameState.customGame = false;
+            
+            // Tampilkan modal pilihan mode
+            document.getElementById('playModeModal').style.display = 'flex';
+        }
+
+        // Fungsi untuk membuat custom room
+        function createCustomRoom() {
+            gameState.customGame = true;
+            gameState.teamAName = document.getElementById('teamAName').value.trim() || 'Team A';
+            gameState.teamBName = document.getElementById('teamBName').value.trim() || 'Team B';
+            
+            // Update tampilan nama tim
+            document.getElementById('teamADisplay').textContent = gameState.teamAName;
+            document.getElementById('teamBDisplay').textContent = gameState.teamBName;
+            document.getElementById('teamATitleDisplay').textContent = gameState.teamAName;
+            document.getElementById('teamBTitleDisplay').textContent = gameState.teamBName;
+            document.getElementById('numbersTeamATitle').textContent = `Angka ${gameState.teamAName}`;
+            document.getElementById('numbersTeamBTitle').textContent = `Angka ${gameState.teamBName}`;
+            
+            // Tampilkan modal pilihan mode
+            document.getElementById('playModeModal').style.display = 'flex';
+        }
+
+        // Fungsi untuk memilih mode bermain
+        function selectPlayMode(watchOnly) {
+            gameState.watchMode = watchOnly;
+            
+            if (gameState.customGame) {
+                if (watchOnly) {
+                    // Mode menonton untuk custom game
+                    setupCustomGamePlayers(true);
+                    initializeGame();
+                } else {
+                    // Mode bermain untuk custom game - tampilkan pilihan pemain
+                    showPlayerSelectionModal();
+                }
+            } else {
+                // Game normal
+                if (watchOnly) {
+                    // Mode menonton untuk game normal
+                    gameState.playerTeam = '';
+                    initializeGame();
+                } else {
+                    // Mode bermain untuk game normal
+                    gameState.playerTeam = Math.random() < 0.5 ? 'A' : 'B';
+                    initializeGame();
+                }
+            }
+            
+            document.getElementById('playModeModal').style.display = 'none';
+        }
+
+        // Fungsi untuk menampilkan modal pemilihan pemain
+        function showPlayerSelectionModal() {
+            const playerSelection = document.getElementById('playerSelectionOptions');
+            playerSelection.innerHTML = '';
+            
+            // Tambahkan pemain Team A
+            const teamAPlayers = [
+                document.getElementById('teamAPlayer1').value.trim() || 'Player A1',
+                document.getElementById('teamAPlayer2').value.trim() || 'Player A2',
+                document.getElementById('teamAPlayer3').value.trim() || 'Player A3',
+                document.getElementById('teamAPlayer4').value.trim() || 'Player A4'
+            ];
+            
+            // Tambahkan pemain Team B
+            const teamBPlayers = [
+                document.getElementById('teamBPlayer1').value.trim() || 'Player B1',
+                document.getElementById('teamBPlayer2').value.trim() || 'Player B2',
+                document.getElementById('teamBPlayer3').value.trim() || 'Player B3',
+                document.getElementById('teamBPlayer4').value.trim() || 'Player B4'
+            ];
+            
+            // Buat daftar pilihan pemain
+            const allPlayers = [];
+            
+            teamAPlayers.forEach((name, index) => {
+                allPlayers.push({ name, team: 'A', index });
+            });
+            
+            teamBPlayers.forEach((name, index) => {
+                allPlayers.push({ name, team: 'B', index });
+            });
+            
+            // Acak urutan pemain
+            allPlayers.sort(() => 0.5 - Math.random());
+            
+            // Tampilkan pilihan pemain
+            allPlayers.forEach(player => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.style.backgroundColor = player.team === 'A' ? '#5c6bc0' : '#9c27b0';
+                button.textContent = `${player.name} (${player.team === 'A' ? gameState.teamAName : gameState.teamBName})`;
+                button.onclick = () => {
+                    selectCustomPlayer(player.name, player.team, player.index);
+                };
+                playerSelection.appendChild(button);
+            });
+            
+            document.getElementById('selectPlayerModal').style.display = 'flex';
+        }
+
+        // Fungsi untuk memilih pemain di custom game
+        function selectCustomPlayer(name, team, index) {
+            gameState.playerName = name;
+            gameState.playerTeam = team;
+            gameState.playerCustomIndex = index;
+            
+            document.getElementById('selectPlayerModal').style.display = 'none';
+            setupCustomGamePlayers(false);
+            initializeGame();
+        }
+
+        // Fungsi untuk menyiapkan pemain custom game
+        function setupCustomGamePlayers(watchOnly) {
+            gameState.players.A = [];
+            gameState.players.B = [];
+            gameState.playerStats.A = [];
+            gameState.playerStats.B = [];
+            
+            const teamAPlayers = [
+                document.getElementById('teamAPlayer1').value.trim() || 'Player A1',
+                document.getElementById('teamAPlayer2').value.trim() || 'Player A2',
+                document.getElementById('teamAPlayer3').value.trim() || 'Player A3',
+                document.getElementById('teamAPlayer4').value.trim() || 'Player A4'
+            ];
+            
+            const teamBPlayers = [
+                document.getElementById('teamBPlayer1').value.trim() || 'Player B1',
+                document.getElementById('teamBPlayer2').value.trim() || 'Player B2',
+                document.getElementById('teamBPlayer3').value.trim() || 'Player B3',
+                document.getElementById('teamBPlayer4').value.trim() || 'Player B4'
+            ];
+            
+            // Setup Team A players
+            teamAPlayers.forEach((name, index) => {
+                gameState.players.A.push({
+                    name: name,
+                    isBot: watchOnly || (name !== gameState.playerName || gameState.playerTeam !== 'A'),
+                    originalIndex: index
+                });
+                
+                gameState.playerStats.A.push({
+                    name: name,
+                    totalNumbers: 0
+                });
+            });
+            
+            // Setup Team B players
+            teamBPlayers.forEach((name, index) => {
+                gameState.players.B.push({
+                    name: name,
+                    isBot: watchOnly || (name !== gameState.playerName || gameState.playerTeam !== 'B'),
+                    originalIndex: index
+                });
+                
+                gameState.playerStats.B.push({
+                    name: name,
+                    totalNumbers: 0
+                });
+            });
+        }
+
+        // Inisialisasi pemain dan permainan
+        function initializeGame() {
+            if (!gameState.customGame) {
+                const shuffledNames = [...botNames].sort(() => 0.5 - Math.random());
+                
+                gameState.players.A = [];
+                gameState.players.B = [];
+                gameState.playerStats.A = [];
+                gameState.playerStats.B = [];
+
+                if (gameState.playerTeam === 'A') {
+                    // Tambahkan pemain manusia ke Team A
+                    gameState.players.A.push({ 
+                        name: gameState.playerName, 
+                        isBot: false, 
+                        originalIndex: 0 
+                    });
+                    
+                    gameState.playerStats.A.push({
+                        name: gameState.playerName,
+                        totalNumbers: 0
+                    });
+                    
+                    // Tambahkan 3 bot ke Team A
+                    for (let i = 1; i < 4; i++) {
+                        const botName = shuffledNames.pop() + " 🖥️";
+                        gameState.players.A.push({ 
+                            name: botName, 
+                            isBot: true, 
+                            originalIndex: i 
+                        });
+                        
+                        gameState.playerStats.A.push({
+                            name: botName,
+                            totalNumbers: 0
+                        });
+                    }
+                    
+                    // Tambahkan 4 bot ke Team B
+                    for (let i = 0; i < 4; i++) {
+                        const botName = shuffledNames.pop() + " 🖥️";
+                        gameState.players.B.push({ 
+                            name: botName, 
+                            isBot: true, 
+                            originalIndex: i 
+                        });
+                        
+                        gameState.playerStats.B.push({
+                            name: botName,
+                            totalNumbers: 0
+                        });
+                    }
+                } else if (gameState.playerTeam === 'B') {
+                    // Tambahkan 4 bot ke Team A
+                    for (let i = 0; i < 4; i++) {
+                        const botName = shuffledNames.pop() + " 🖥️";
+                        gameState.players.A.push({ 
+                            name: botName, 
+                            isBot: true, 
+                            originalIndex: i 
+                        });
+                        
+                        gameState.playerStats.A.push({
+                            name: botName,
+                            totalNumbers: 0
+                        });
+                    }
+                    
+                    // Tambahkan pemain manusia ke Team B
+                    gameState.players.B.push({ 
+                        name: gameState.playerName, 
+                        isBot: false, 
+                        originalIndex: 0 
+                    });
+                    
+                    gameState.playerStats.B.push({
+                        name: gameState.playerName,
+                        totalNumbers: 0
+                    });
+                    
+                    // Tambahkan 3 bot ke Team B
+                    for (let i = 1; i < 4; i++) {
+                        const botName = shuffledNames.pop() + " 🖥️";
+                        gameState.players.B.push({ 
+                            name: botName, 
+                            isBot: true, 
+                            originalIndex: i 
+                        });
+                        
+                        gameState.playerStats.B.push({
+                            name: botName,
+                            totalNumbers: 0
+                        });
+                    }
+                } else {
+                    // Mode menonton - semua bot
+                    for (let i = 0; i < 4; i++) {
+                        const botName = shuffledNames.pop() + " 🖥️";
+                        gameState.players.A.push({ 
+                            name: botName, 
+                            isBot: true, 
+                            originalIndex: i 
+                        });
+                        
+                        gameState.playerStats.A.push({
+                            name: botName,
+                            totalNumbers: 0
+                        });
+                    }
+                    for (let i = 0; i < 4; i++) {
+                        const botName = shuffledNames.pop() + " 🖥️";
+                        gameState.players.B.push({ 
+                            name: botName, 
+                            isBot: true, 
+                            originalIndex: i 
+                        });
+                        
+                        gameState.playerStats.B.push({
+                            name: botName,
+                            totalNumbers: 0
+                        });
+                    }
+                }
+            }
+            
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            
+            displayPlayers();
+            prepareRound();
+        }
+
+        // Persiapan ronde baru
+        function prepareRound() {
+            gameState.roundActive = false;
+            gameState.banPhase = false;
+            gameState.teamAPicks = new Array(4).fill(null);
+            gameState.teamBPicks = new Array(4).fill(null);
+            gameState.selectedNumbers.clear();
+            gameState.bannedNumbers = [];
+            gameState.currentSelection = null;
+            gameState.picksTakenInRound = 0;
+            gameState.currentTurnPlayerIndex = 0;
+            gameState.isPaused = false;
+            gameState.pauseRequested = false;
+            
+            clearInterval(gameState.timerInterval);
+            clearInterval(gameState.banTimerInterval);
+            clearInterval(gameState.pauseTimerInterval);
+            clearInterval(gameState.pauseRequestTimerInterval);
+            
+            // Reset tampilan pilihan pemain
+            for (let i = 0; i < 4; i++) {
+                const aPick = document.getElementById(`teamAPlayer${i}Pick`);
+                const bPick = document.getElementById(`teamBPlayer${i}Pick`);
+                if (aPick) aPick.textContent = '-';
+                if (bPick) bPick.textContent = '-';
+            }
+            
+            document.getElementById('teamATotal').textContent = 'Total: 0';
+            document.getElementById('teamBTotal').textContent = 'Total: 0';
+            
+            // Generate 10 angka unik untuk ronde ini (1-10)
+            gameState.roundNumbers = [];
+            while (gameState.roundNumbers.length < 10) {
+                const num = Math.floor(Math.random() * 10) + 1;
+                if (!gameState.roundNumbers.includes(num)) {
+                    gameState.roundNumbers.push(num);
+                }
+            }
+            
+            // Acak urutan pemain untuk ronde ini
+            gameState.currentPlayerOrder.A = [...Array(4).keys()].sort(() => 0.5 - Math.random());
+            gameState.currentPlayerOrder.B = [...Array(4).keys()].sort(() => 0.5 - Math.random());
+            
+            displayRoundNumbers();
+            
+            document.getElementById('currentRound').textContent = gameState.currentRound;
+            document.getElementById('confirmBtn').disabled = true;
+            document.getElementById('banBtn').style.display = 'none';
+            document.getElementById('nextRoundBtn').disabled = true;
+            document.getElementById('startRoundBtn').disabled = false;
+            document.getElementById('banPhase').style.display = 'none';
+            document.getElementById('pauseScreen').style.display = 'none';
+            document.getElementById('pauseRequestModal').style.display = 'none'; // Sembunyikan modal pause request
+            
+            // Update tampilan pause count
+            document.getElementById('teamAPauseCount').textContent = `Pause tersedia: ${gameState.pauseCount.A}`;
+            document.getElementById('teamBPauseCount').textContent = `Pause tersedia: ${gameState.pauseCount.B}`;
+            
+            // Update tombol pause
+            updatePauseButton();
+            
+            addGameLog(`Ronde ${gameState.currentRound} siap!`);
+            addGameLog(`Angka tersedia: ${gameState.roundNumbers.join(', ')}`);
+            
+            // Update momentum tim
+            updateTeamMomentum();
+            
+            // Bot akan mempertimbangkan untuk request pause jika sedang kalah
+            if (!gameState.watchMode && gameState.currentRound > 1) {
+                considerBotPauseRequest();
+            }
+        }
+
+        // Bot mempertimbangkan untuk request pause
+        function considerBotPauseRequest() {
+            const botTeam = gameState.playerTeam === 'A' ? 'B' : 'A';
+            const botTeamName = botTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+            
+            // Cek apakah bot team sedang kalah dan memiliki pause tersedia
+            const isLosing = (botTeam === 'A' && gameState.teamAScore < gameState.teamBScore) ||
+                             (botTeam === 'B' && gameState.teamBScore < gameState.teamAScore);
+            
+            if (isLosing && gameState.pauseCount[botTeam] > 0) {
+                // Hitung probabilitas request pause berdasarkan momentum dan selisih skor
+                const scoreDiff = Math.abs(gameState.teamAScore - gameState.teamBScore);
+                const momentum = botTeam === 'A' ? gameState.teamAMomentum : gameState.teamBMomentum;
+                
+                // Semakin besar selisih skor, semakin tinggi kemungkinan request pause
+                // Semakin buruk momentum, semakin tinggi kemungkinan request pause
+                let pauseProbability = 0.3 + (scoreDiff * 0.1) - (momentum * 0.1);
+                pauseProbability = Math.max(0.1, Math.min(0.8, pauseProbability));
+                
+                if (Math.random() < pauseProbability) {
+                    // Bot akan request pause
+                    setTimeout(() => {
+                        gameState.pauseRequested = true;
+                        gameState.pauseRequestTeam = botTeam;
+                        
+                        const teamName = botTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+                        addGameLog(`${teamName} meminta pause untuk mereset momentum!`);
+                        
+                        // Tampilkan modal permintaan pause
+                        showPauseRequestModal(botTeam);
+                    }, 1000);
+                }
+            }
+        }
+
+        // Tampilkan modal permintaan pause
+        function showPauseRequestModal(team) {
+            const teamName = team === 'A' ? gameState.teamAName : gameState.teamBName;
+            
+            document.getElementById('pauseRequestModalTitle').textContent = `Permintaan Pause!`;
+            document.getElementById('pauseRequestModalMessage').textContent = 
+                `${teamName} meminta pause untuk mereset momentum!`;
+            
+            document.getElementById('pauseRequestModal').style.display = 'flex';
+            
+            // Kontrol tombol terima/tolak berdasarkan apakah pemain yang melihat adalah manusia dari tim lawan
+            const acceptBtn = document.getElementById('acceptPauseBtnModal');
+            const rejectBtn = document.getElementById('rejectPauseBtnModal');
+            
+            if (gameState.watchMode || gameState.playerTeam === team) {
+                // Jika mode menonton atau tim yang meminta pause adalah tim pemain sendiri, nonaktifkan tombol
+                acceptBtn.disabled = true;
+                rejectBtn.disabled = true;
+                // Auto-accept after a short delay for spectator/same-team view
+                setTimeout(acceptPause, 2000); 
+            } else {
+                // Jika tim pemain adalah tim lawan, aktifkan tombol dan mulai timer
+                acceptBtn.disabled = false;
+                rejectBtn.disabled = false;
+                
+                gameState.pauseRequestTime = 5;
+                document.getElementById('pauseRequestModalTimer').textContent = gameState.pauseRequestTime;
+                
+                gameState.pauseRequestTimerInterval = setInterval(() => {
+                    gameState.pauseRequestTime--;
+                    document.getElementById('pauseRequestModalTimer').textContent = gameState.pauseRequestTime;
+                    
+                    if (gameState.pauseRequestTime <= 0) {
+                        clearInterval(gameState.pauseRequestTimerInterval);
+                        // Jika waktu habis, auto tolak
+                        rejectPause();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Update tombol pause berdasarkan kondisi
+        function updatePauseButton() {
+            const pauseBtn = document.getElementById('pauseRequestBtn');
+            
+            if (!gameState.playerTeam || gameState.watchMode) {
+                pauseBtn.disabled = true;
+                return;
+            }
+            
+            const isLosingTeam = (gameState.playerTeam === 'A' && gameState.teamAScore < gameState.teamBScore) ||
+                                 (gameState.playerTeam === 'B' && gameState.teamBScore < gameState.teamAScore);
+            
+            pauseBtn.disabled = !isLosingTeam || gameState.pauseCount[gameState.playerTeam] <= 0 || 
+                                 gameState.isPaused || gameState.roundActive || gameState.pauseRequested;
+            
+            pauseBtn.textContent = `Request Pause (${gameState.pauseCount[gameState.playerTeam]})`;
+        }
+
+        // Request pause game
+        function requestPause() {
+            if (gameState.isPaused || gameState.pauseCount[gameState.playerTeam] <= 0 || gameState.pauseRequested) return;
+            
+            gameState.pauseRequested = true;
+            gameState.pauseRequestTeam = gameState.playerTeam;
+            
+            const teamName = gameState.playerTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+            addGameLog(`${teamName} meminta pause untuk mereset momentum!`);
+            
+            // Tampilkan modal permintaan pause
+            showPauseRequestModal(gameState.playerTeam);
+        }
+
+        // Terima pause game
+        function acceptPause() {
+            const teamName = gameState.pauseRequestTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+            
+            // Kurangi jatah pause
+            if (!gameState.watchMode || (gameState.watchMode && gameState.pauseRequestTeam !== gameState.playerTeam)) {
+                // Only deduct pause count if a player actually accepted or if it's a bot's request in watch mode
+                // and it wasn't the player's team making the request (to avoid double deduction in player mode)
+                 if (gameState.pauseCount[gameState.pauseRequestTeam] > 0) {
+                    gameState.pauseCount[gameState.pauseRequestTeam]--;
+                }
+            }
+            
+            // Reset momentum
+            gameState.teamAMomentum = 0;
+            gameState.teamBMomentum = 0;
+            gameState.consecutiveWins.A = 0;
+            gameState.consecutiveWins.B = 0;
+            
+            updateTeamMomentum();
+            updatePauseButton();
+            
+            addGameLog(`Pause diterima! Momentum direset.`);
+            
+            // Sembunyikan pause request modal
+            document.getElementById('pauseRequestModal').style.display = 'none';
+            clearInterval(gameState.pauseRequestTimerInterval);
+            
+            gameState.isPaused = true;
+            gameState.pauseRequested = false;
+            
+            // Tampilkan layar pause
+            document.getElementById('pauseScreen').style.display = 'flex';
+            gameState.pauseTime = 10;
+            document.getElementById('pauseTimer').textContent = gameState.pauseTime;
+            
+            // Update tampilan pause count
+            document.getElementById(`team${gameState.pauseRequestTeam}PauseCount`).textContent = 
+                `Pause tersedia: ${gameState.pauseCount[gameState.pauseRequestTeam]}`;
+            
+            // Mulai timer pause
+            gameState.pauseTimerInterval = setInterval(() => {
+                gameState.pauseTime--;
+                document.getElementById('pauseTimer').textContent = gameState.pauseTime;
+                
+                if (gameState.pauseTime <= 0) {
+                    clearInterval(gameState.pauseTimerInterval);
+                    gameState.isPaused = false;
+                    document.getElementById('pauseScreen').style.display = 'none';
+                    addGameLog(`Permainan dilanjutkan!`);
+                    updatePauseButton();
+                    
+                    // 50% chance momentum membaik untuk tim yang request pause
+                    if (Math.random() < 0.5) {
+                        if (gameState.pauseRequestTeam === 'A') {
+                            gameState.teamAMomentum = 1;
+                        } else {
+                            gameState.teamBMomentum = 1;
+                        }
+                        addGameLog(`Momentum ${teamName} membaik setelah pause!`);
+                        updateTeamMomentum();
+                    } else {
+                        addGameLog(`Pause tidak memberikan efek signifikan.`);
+                    }
+                }
+            }, 1000);
+        }
+
+        // Tolak pause game
+        function rejectPause() {
+            const teamName = gameState.pauseRequestTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+            addGameLog(`Permintaan pause dari ${teamName} ditolak!`);
+            
+            // Sembunyikan pause request modal
+            document.getElementById('pauseRequestModal').style.display = 'none';
+            clearInterval(gameState.pauseRequestTimerInterval);
+            
+            gameState.pauseRequested = false;
+            
+            // 30% chance momentum memburuk untuk tim yang request pause
+            if (Math.random() < 0.3) {
+                if (gameState.pauseRequestTeam === 'A') {
+                    gameState.teamAMomentum = -1;
+                } else {
+                    gameState.teamBMomentum = -1;
+                }
+                addGameLog(`${teamName} kehilangan momentum setelah permintaan pause ditolak!`);
+                updateTeamMomentum();
+            }
+        }
+
+        // Update momentum tim berdasarkan performa
+        function updateTeamMomentum() {
+            const scoreDiff = gameState.teamAScore - gameState.teamBScore;
+            
+            // Hitung momentum untuk Team A
+            if (gameState.consecutiveWins.A >= 2) {
+                // Jika menang beruntun, momentum tinggi
+                gameState.teamAMomentum = Math.min(2, gameState.teamAMomentum + 1);
+                gameState.teamBMomentum = Math.max(-2, gameState.teamBMomentum - 1);
+                
+                // 20% chance momentum bisa turun tiba-tiba
+                if (Math.random() < 0.2) {
+                    gameState.teamAMomentum = Math.max(-1, gameState.teamAMomentum - 1);
+                    gameState.teamBMomentum = Math.min(1, gameState.teamBMomentum + 1);
+                    addGameLog(`${gameState.teamAName} kehilangan momentum karena terlalu percaya diri!`);
+                }
+            } else if (gameState.consecutiveWins.B >= 2) {
+                // Jika lawan menang beruntun, momentum rendah
+                gameState.teamAMomentum = Math.max(-2, gameState.teamAMomentum - 1);
+                gameState.teamBMomentum = Math.min(2, gameState.teamBMomentum + 1);
+                
+                // 20% chance momentum bisa naik tiba-tiba
+                if (Math.random() < 0.2) {
+                    gameState.teamAMomentum = Math.min(1, gameState.teamAMomentum + 1);
+                    gameState.teamBMomentum = Math.max(-1, gameState.teamBMomentum - 1);
+                    addGameLog(`${gameState.teamAName} mendapatkan momentum baru!`);
+                }
+            } else {
+                // Sesuaikan momentum berdasarkan selisih skor
+                if (scoreDiff > 2) {
+                    gameState.teamAMomentum = Math.min(2, gameState.teamAMomentum + 0.5);
+                    gameState.teamBMomentum = Math.max(-2, gameState.teamBMomentum - 0.5);
+                } else if (scoreDiff < -2) {
+                    gameState.teamAMomentum = Math.max(-2, gameState.teamAMomentum - 0.5);
+                    gameState.teamBMomentum = Math.min(2, gameState.teamBMomentum + 0.5);
+                } else {
+                    // Reset momentum jika skor seimbang
+                    gameState.teamAMomentum = 0;
+                    gameState.teamBMomentum = 0;
+                }
+            }
+            
+            // Aktifkan catch-up mode jika selisih skor besar
+            gameState.catchUpMode = Math.abs(scoreDiff) >= 3;
+            
+            // Update tampilan momentum
+            updateMomentumDisplay();
+            updatePauseButton();
+        }
+
+        // Update tampilan momentum tim
+        function updateMomentumDisplay() {
+            const teamAMomentumEl = document.getElementById('teamAMomentum');
+            const teamBMomentumEl = document.getElementById('teamBMomentum');
+            
+            if (gameState.teamAMomentum > 0) {
+                teamAMomentumEl.textContent = `Momentum: ${'↑'.repeat(Math.round(gameState.teamAMomentum))}`;
+                teamAMomentumEl.className = 'team-momentum momentum-high';
+            } else if (gameState.teamAMomentum < 0) {
+                teamAMomentumEl.textContent = `Momentum: ${'↓'.repeat(Math.abs(Math.round(gameState.teamAMomentum)))}`;
+                teamAMomentumEl.className = 'team-momentum momentum-low';
+            } else {
+                teamAMomentumEl.textContent = 'Momentum: -';
+                teamAMomentumEl.className = 'team-momentum';
+            }
+            
+            if (gameState.teamBMomentum > 0) {
+                teamBMomentumEl.textContent = `Momentum: ${'↑'.repeat(Math.round(gameState.teamBMomentum))}`;
+                teamBMomentumEl.className = 'team-momentum momentum-high';
+            } else if (gameState.teamBMomentum < 0) {
+                teamBMomentumEl.textContent = `Momentum: ${'↓'.repeat(Math.abs(Math.round(gameState.teamBMomentum)))}`;
+                teamBMomentumEl.className = 'team-momentum momentum-low';
+            } else {
+                teamBMomentumEl.textContent = 'Momentum: -';
+                teamBMomentumEl.className = 'team-momentum';
+            }
+            
+            if (gameState.catchUpMode) {
+                const losingTeam = gameState.teamAScore < gameState.teamBScore ? 'A' : 'B';
+                const losingTeamName = losingTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+                addGameLog(`${losingTeamName} dalam mode mengejar ketertinggalan!`);
+            }
+        }
+
+        // Memulai ronde
+        function startRound() {
+            if (gameState.isPaused || gameState.pauseRequested) return;
+            
+            gameState.roundActive = true;
+            document.getElementById('startRoundBtn').disabled = true;
+            updatePauseButton();
+            
+            // Jika ronde pertama, acak tim yang mulai pertama
+            if (gameState.currentRound === 1) {
+                showStartingTeamModal();
+            } 
+            // Jika bukan ronde pertama, tim yang menang ronde sebelumnya mulai duluan
+            else if (gameState.lastRoundWinner) {
+                gameState.currentTurnTeam = gameState.lastRoundWinner;
+                gameState.firstPickTeam = gameState.lastRoundWinner;
+                addGameLog(`Team ${gameState.currentTurnTeam === 'A' ? gameState.teamAName : gameState.teamBName} memulai pertama karena menang ronde sebelumnya.`);
+                startBanPhase();
+            }
+            // Jika seri, tim yang tidak mulai duluan di ronde sebelumnya yang mulai duluan
+            else {
+                gameState.currentTurnTeam = gameState.currentTurnTeam === 'A' ? 'B' : 'A';
+                gameState.firstPickTeam = gameState.currentTurnTeam;
+                addGameLog(`Team ${gameState.currentTurnTeam === 'A' ? gameState.teamAName : gameState.teamBName} memulai pertama karena ronde sebelumnya seri.`);
+                startBanPhase();
+            }
+        }
+
+        // Memulai fase ban angka
+        function startBanPhase() {
+            gameState.banPhase = true;
+            gameState.currentSelection = null;
+            
+            // Tim yang memilih kedua akan melakukan ban
+            const banningTeam = gameState.firstPickTeam === 'A' ? 'B' : 'A';
+            const banningTeamName = banningTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+            
+            document.getElementById('banPhase').style.display = 'block';
+            document.getElementById('banPhaseMessage').textContent = `${banningTeamName} sedang memilih angka untuk di-ban`;
+            
+            // Tampilkan tombol ban
+            document.getElementById('banBtn').style.display = 'block';
+            document.getElementById('banBtn').disabled = true;
+            document.getElementById('confirmBtn').style.display = 'none';
+            
+            // Setel pemain yang akan melakukan ban (pemain pertama di tim yang ban)
+            const originalPlayerIndex = gameState.currentPlayerOrder[banningTeam][0];
+            const currentPlayer = gameState.players[banningTeam][originalPlayerIndex];
+            gameState.playerPickingNow = currentPlayer.name;
+            
+            // Highlight pemain yang sedang giliran
+            document.querySelectorAll('.player.active').forEach(el => el.classList.remove('active'));
+            const playerElement = document.getElementById(`team${banningTeam}Player${originalPlayerIndex}Name`);
+            if (playerElement) {
+                playerElement.parentElement.classList.add('active');
+            }
+            
+            addGameLog(`Fase ban: ${currentPlayer.name} (${banningTeamName}) memilih angka untuk di-ban.`);
+            
+            // Atur interaksi angka untuk ban
+            const numbersContainer = document.getElementById(`numbersContainer${banningTeam}`);
+            numbersContainer.querySelectorAll('.number').forEach(numElement => {
+                const num = parseInt(numElement.textContent);
+                numElement.onclick = () => selectNumberForBan(num, numElement.dataset.index, banningTeam);
+                numElement.style.cursor = 'pointer';
+            });
+            
+            // Mulai timer ban
+            resetBanTimer();
+            gameState.banTimer = 6;
+            updateBanTimerDisplay();
+            
+            gameState.banTimerInterval = setInterval(() => {
+                gameState.banTimer--;
+                updateBanTimerDisplay();
+                
+                if (gameState.banTimer <= 0) {
+                    clearInterval(gameState.banTimerInterval);
+                    if (currentPlayer.isBot) {
+                        makeBotBanSelection(banningTeam);
+                    } else {
+                        // Jika pemain manusia tidak memilih, pilih angka secara acak
+                        const availableNumbers = [...gameState.roundNumbers];
+                        const numberToBan = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+                        gameState.currentSelection = numberToBan;
+                        confirmBan();
+                    }
+                }
+            }, 1000);
+            
+            if (currentPlayer.isBot) {
+                setTimeout(() => {
+                    makeBotBanSelection(banningTeam);
+                }, 1500);
+            }
+        }
+
+        // Memilih angka untuk di-ban
+        function selectNumberForBan(number, index, teamDisplay) {
+            if (!gameState.banPhase || gameState.playerPickingNow !== gameState.playerName) {
+                return;
+            }
+            
+            // Hapus seleksi sebelumnya
+            document.querySelectorAll(`.number.selected[data-team="${teamDisplay}"]`)
+                .forEach(el => el.classList.remove('selected'));
+            
+            // Set seleksi baru
+            gameState.currentSelection = number;
+            document.querySelector(`.number[data-team="${teamDisplay}"][data-index="${index}"]`)
+                .classList.add('selected');
+            
+            document.getElementById('banBtn').disabled = false;
+        }
+
+        // Konfirmasi ban angka
+        function confirmBan() {
+            if (!gameState.currentSelection || !gameState.banPhase) return;
+            
+            clearInterval(gameState.banTimerInterval);
+            
+            const banningTeam = gameState.firstPickTeam === 'A' ? 'B' : 'A';
+            const banningTeamName = banningTeam === 'A' ? gameState.teamAName : gameState.teamBName;
+            const bannedNumber = gameState.currentSelection;
+            
+            // Simpan angka yang di-ban
+            gameState.bannedNumbers.push(bannedNumber);
+            
+            // Tandai angka sebagai banned di kedua tampilan tim
+            document.querySelectorAll(`.number[data-number="${bannedNumber}"]`).forEach(el => {
+                el.classList.add('banned');
+                el.onclick = null;
+                el.style.cursor = 'not-allowed';
+            });
+            
+            addGameLog(`${banningTeamName} melarang penggunaan angka ${bannedNumber} di ronde ini!`);
+            
+            // Tampilkan modal ban
+            document.getElementById('banModalTitle').textContent = `Angka Dilarang!`;
+            document.getElementById('banModalMessage').textContent = 
+                `${banningTeamName} telah melarang penggunaan angka ${bannedNumber} di ronde ini!`;
+            document.getElementById('banModal').style.display = 'flex';
+            
+            // Selesaikan fase ban
+            gameState.banPhase = false;
+            document.getElementById('banPhase').style.display = 'none';
+            document.getElementById('banBtn').style.display = 'none';
+            document.getElementById('confirmBtn').style.display = 'inline-block';
+        }
+
+        // Tutup modal ban
+        function closeBanModal() {
+            document.getElementById('banModal').style.display = 'none';
+            
+            // Lanjutkan ke giliran pertama
+            gameState.currentTurnTeam = gameState.firstPickTeam;
+            startTurn();
+        }
+
+        // Bot memilih angka untuk di-ban dengan strategi yang lebih canggih
+        function makeBotBanSelection(banningTeam) {
+            const availableNumbers = gameState.roundNumbers.filter(
+                num => !gameState.selectedNumbers.has(num) && !gameState.bannedNumbers.includes(num)
+            );
+            let numberToBan;
+            
+            const isTeamA = banningTeam === 'A';
+            const momentum = isTeamA ? gameState.teamAMomentum : gameState.teamBMomentum;
+            const opponentMomentum = isTeamA ? gameState.teamBMomentum : gameState.teamAMomentum;
+            
+            // Strategi ban berdasarkan momentum dan situasi permainan
+            if (momentum > 0) {
+                // Jika momentum bagus, ban angka yang bisa merugikan lawan
+                if (opponentMomentum > 0) {
+                    // Jika lawan juga momentum bagus, ban angka tertinggi
+                    numberToBan = Math.max(...availableNumbers);
+                } else {
+                    // Jika lawan momentum jelek, ban angka tengah untuk mempersulit
+                    availableNumbers.sort((a, b) => a - b);
+                    const midIndex = Math.floor(availableNumbers.length / 2);
+                    numberToBan = availableNumbers[midIndex];
+                }
+            } else if (momentum < 0) {
+                // Jika momentum jelek, ban angka acak untuk mengacaukan strategi lawan
+                numberToBan = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+            } else {
+                // Jika momentum netral, ban angka yang sering dipilih lawan
+                // Di sini kita sederhanakan dengan memilih angka tertinggi kedua
+                availableNumbers.sort((a, b) => b - a);
+                numberToBan = availableNumbers.length > 1 ? availableNumbers[1] : availableNumbers[0];
+            }
+            
+            // 20% chance untuk memilih angka acak sebagai variasi strategi
+            if (Math.random() < 0.2) {
+                numberToBan = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+            }
+            
+            // Simulasikan klik pada angka yang akan di-ban
+            const numberElement = document.querySelector(`.number[data-team="${banningTeam}"][data-number="${numberToBan}"]`);
+            if (numberElement) {
+                gameState.currentSelection = numberToBan;
+                setTimeout(() => {
+                    confirmBan();
+                }, 800);
+            }
+        }
+
+        // Menampilkan modal tim yang memulai
+        function showStartingTeamModal() {
+            const modal = document.getElementById('startingTeamModal');
+            const title = document.getElementById('startingTeamModalTitle');
+            const message = document.getElementById('startingTeamModalMessage');
+            
+            // Animasi random team selection
+            let counter = 0;
+            const teams = [gameState.teamAName, gameState.teamBName];
+            const interval = setInterval(() => {
+                title.textContent = "Memilih Tim yang Memulai...";
+                message.textContent = `Tim yang memulai: ${teams[counter % 2]}`;
+                counter++;
+                
+                if (counter > 6) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        gameState.currentTurnTeam = Math.random() < 0.5 ? 'A' : 'B';
+                        gameState.firstPickTeam = gameState.currentTurnTeam;
+                        title.textContent = "Tim yang Memulai";
+                        message.textContent = `${gameState.currentTurnTeam === 'A' ? gameState.teamAName : gameState.teamBName} akan memulai pertama di Ronde 1.`;
+                        addGameLog(`${gameState.currentTurnTeam === 'A' ? gameState.teamAName : gameState.teamBName} akan memulai pertama di Ronde 1.`);
+                    }, 500);
+                }
+            }, 200);
+            
+            modal.style.display = 'flex';
+        }
+
+        // Menutup modal tim yang memulai
+        function closeStartingTeamModal() {
+            document.getElementById('startingTeamModal').style.display = 'none';
+            startBanPhase();
+        }
+
+        // Memulai giliran pemain
+        function startTurn() {
+            if (!gameState.roundActive || gameState.picksTakenInRound >= gameState.totalPicksPerRound || gameState.isPaused) {
+                return;
+            }
+            
+            clearInterval(gameState.timerInterval);
+            resetTimer();
+
+            // Bersihkan seleksi sebelumnya
+            document.querySelectorAll('.number.selected').forEach(el => el.classList.remove('selected'));
+            
+            // Reset active player highlight
+            document.querySelectorAll('.player.active').forEach(el => el.classList.remove('active'));
+            
+            // Atur interaksi angka
+            const currentTeam = gameState.currentTurnTeam;
+            const numbersContainer = document.getElementById(`numbersContainer${currentTeam}`);
+            
+            numbersContainer.querySelectorAll('.number').forEach(numElement => {
+                const num = parseInt(numElement.textContent);
+                const isUsed = gameState.selectedNumbers.has(num);
+                const isBanned = gameState.bannedNumbers.includes(num);
+                
+                if (isUsed || isBanned) {
+                    numElement.classList.add(isUsed ? 'used' : 'banned');
+                    numElement.onclick = null;
+                    numElement.style.cursor = 'default';
+                } else {
+                    numElement.classList.remove('used', 'banned');
+                    numElement.onclick = () => selectNumber(num, numElement.dataset.index, currentTeam);
+                    numElement.style.cursor = 'pointer';
+                }
+            });
+
+            // Dapatkan pemain yang sedang giliran
+            const playerOrderIndex = gameState.currentTurnPlayerIndex;
+            const originalPlayerIndex = gameState.currentPlayerOrder[currentTeam][playerOrderIndex];
+            const currentPlayer = gameState.players[currentTeam][originalPlayerIndex];
+            gameState.playerPickingNow = currentPlayer.name;
+            
+            // Highlight pemain yang sedang giliran
+            const playerElement = document.getElementById(`team${currentTeam}Player${originalPlayerIndex}Name`);
+            if (playerElement) {
+                playerElement.parentElement.classList.add('active');
+            }
+            
+            addGameLog(`Giliran ${currentPlayer.name} (${currentTeam === 'A' ? gameState.teamAName : gameState.teamBName}) memilih angka.`);
+
+            if (currentPlayer.isBot || gameState.watchMode) { // Tambahkan kondisi watchMode
+                document.getElementById('confirmBtn').disabled = true;
+                startBotSelection();
+            } else {
+                document.getElementById('confirmBtn').disabled = true;
+                startPlayerSelectionTimer();
+            }
+        }
+
+        // Menampilkan daftar pemain
+        function displayPlayers() {
+            const teamAPlayersElement = document.getElementById('teamAPlayers');
+            const teamBPlayersElement = document.getElementById('teamBPlayers');
+            
+            teamAPlayersElement.innerHTML = '';
+            teamBPlayersElement.innerHTML = '';
+            
+            // Tampilkan pemain Team A
+            gameState.players.A.forEach((player, index) => {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player';
+                playerElement.id = `teamAPlayer${index}`;
+                
+                const nameElement = document.createElement('span');
+                nameElement.className = 'player-name';
+                nameElement.id = `teamAPlayer${index}Name`;
+                if (player.name === gameState.playerName) {
+                    nameElement.classList.add('player-you');
+                }
+                nameElement.textContent = player.name;
+                
+                const pickElement = document.createElement('span');
+                pickElement.id = `teamAPlayer${index}Pick`;
+                pickElement.textContent = '-';
+                
+                playerElement.appendChild(nameElement);
+                playerElement.appendChild(pickElement);
+                teamAPlayersElement.appendChild(playerElement);
+            });
+            
+            // Tampilkan pemain Team B
+            gameState.players.B.forEach((player, index) => {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player';
+                playerElement.id = `teamBPlayer${index}`;
+                
+                const nameElement = document.createElement('span');
+                nameElement.className = 'player-name';
+                nameElement.id = `teamBPlayer${index}Name`;
+                if (player.name === gameState.playerName) {
+                    nameElement.classList.add('player-you');
+                }
+                nameElement.textContent = player.name;
+                
+                const pickElement = document.createElement('span');
+                pickElement.id = `teamBPlayer${index}Pick`;
+                pickElement.textContent = '-';
+                
+                playerElement.appendChild(nameElement);
+                playerElement.appendChild(pickElement);
+                teamBPlayersElement.appendChild(playerElement);
+            });
+        }
+
+        // Menampilkan angka untuk ronde ini (1-10)
+        function displayRoundNumbers() {
+            const numbersContainerA = document.getElementById('numbersContainerA');
+            const numbersContainerB = document.getElementById('numbersContainerB');
+            numbersContainerA.innerHTML = '';
+            numbersContainerB.innerHTML = '';
+            
+            // Tampilkan angka untuk Team A
+            gameState.roundNumbers.forEach((num, index) => {
+                const numberElement = createNumberElement(num, index, 'A');
+                numbersContainerA.appendChild(numberElement);
+            });
+
+            // Tampilkan angka untuk Team B (sama dengan Team A)
+            gameState.roundNumbers.forEach((num, index) => {
+                const numberElement = createNumberElement(num, index, 'B');
+                numbersContainerB.appendChild(numberElement);
+            });
+        }
+
+        // Membuat elemen angka
+        function createNumberElement(num, index, teamDisplay) {
+            const numberElement = document.createElement('div');
+            numberElement.className = 'number';
+            numberElement.textContent = num;
+            numberElement.dataset.number = num;
+            numberElement.dataset.index = index;
+            numberElement.dataset.team = teamDisplay;
+            
+            numberElement.onclick = () => selectNumber(num, index, teamDisplay);
+            
+            return numberElement;
+        }
+
+        // Memilih angka (untuk pemain manusia)
+        function selectNumber(number, index, teamDisplay) {
+            if (!gameState.roundActive || gameState.banPhase || gameState.isPaused ||
+                gameState.playerPickingNow !== gameState.playerName || 
+                teamDisplay !== gameState.currentTurnTeam || gameState.watchMode) { // Tambahkan kondisi watchMode
+                return;
+            }
+            
+            // Periksa apakah angka sudah dipakai atau diban
+            if (gameState.selectedNumbers.has(number) || gameState.bannedNumbers.includes(number)) {
+                return;
+            }
+
+            // Hapus seleksi sebelumnya
+            document.querySelectorAll(`.number.selected[data-team="${teamDisplay}"]`)
+                .forEach(el => el.classList.remove('selected'));
+            
+            // Set seleksi baru
+            gameState.currentSelection = number;
+            document.querySelector(`.number[data-team="${teamDisplay}"][data-index="${index}"]`)
+                .classList.add('selected');
+            
+            document.getElementById('confirmBtn').disabled = false;
+        }
+
+        // Konfirmasi pilihan angka
+        function confirmSelection() {
+            if (!gameState.currentSelection || gameState.playerPickingNow !== gameState.playerName) return;
+            
+            clearInterval(gameState.timerInterval);
+            
+            const team = gameState.currentTurnTeam;
+            const playerOrderIndex = gameState.currentTurnPlayerIndex;
+            const originalPlayerIndex = gameState.currentPlayerOrder[team][playerOrderIndex];
+            const selectedNumber = gameState.currentSelection;
+            
+            // Simpan pilihan
+            if (team === 'A') {
+                gameState.teamAPicks[originalPlayerIndex] = selectedNumber;
+                // Update statistik pemain
+                gameState.playerStats.A[originalPlayerIndex].totalNumbers += selectedNumber;
+            } else {
+                gameState.teamBPicks[originalPlayerIndex] = selectedNumber;
+                // Update statistik pemain
+                gameState.playerStats.B[originalPlayerIndex].totalNumbers += selectedNumber;
+            }
+            
+            // Tampilkan pilihan
+            document.getElementById(`team${team}Player${originalPlayerIndex}Pick`).textContent = selectedNumber;
+            
+            // Tandai angka sebagai digunakan
+            markNumberAsUsed(selectedNumber);
+            
+            addGameLog(`${gameState.playerPickingNow} memilih angka ${selectedNumber}`);
+            
+            gameState.currentSelection = null;
+            document.getElementById('confirmBtn').disabled = true;
+            
+            nextTurn();
+        }
+
+        // Menandai angka sebagai sudah digunakan
+        function markNumberAsUsed(number) {
+            // Tandai di kedua tampilan tim
+            document.querySelectorAll(`.number[data-number="${number}"]`).forEach(el => {
+                el.classList.add('used');
+                el.onclick = null;
+                el.style.cursor = 'default';
+            });
+            
+            // Tambahkan ke set angka yang digunakan
+            gameState.selectedNumbers.add(number);
+        }
+
+        // Giliran bot memilih angka
+        function startBotSelection() {
+            resetTimer();
+            gameState.timer = 6;
+            updateTimerDisplay();
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                updateTimerDisplay();
+                
+                if (gameState.timer <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    makeBotSelection(gameState.currentTurnTeam);
+                }
+            }, 1000);
+        }
+
+        // Logika pemilihan angka oleh bot dengan sistem momentum dan blunder
+        function makeBotSelection(team) {
+            const availableNumbers = gameState.roundNumbers.filter(
+                num => !gameState.selectedNumbers.has(num) && !gameState.bannedNumbers.includes(num)
+            );
+            
+            let selectedNumber;
+            
+            if (availableNumbers.length > 0) {
+                // Dapatkan momentum tim saat ini
+                const momentum = team === 'A' ? gameState.teamAMomentum : gameState.teamBMomentum;
+                const isLosingTeam = gameState.catchUpMode && 
+                    ((team === 'A' && gameState.teamAScore < gameState.teamBScore) || 
+                     (team === 'B' && gameState.teamBScore < gameState.teamAScore));
+                
+                // Urutkan angka tersedia
+                availableNumbers.sort((a, b) => b - a);
+                
+                // Cek apakah bot akan membuat blunder (salah pilih)
+                let willBlunder = false;
+                if (momentum > 1) {
+                    // Jika momentum sangat tinggi, 15% chance untuk blunder
+                    willBlunder = Math.random() < 0.15;
+                } else if (momentum < -1) {
+                    // Jika momentum sangat rendah, 5% chance untuk blunder
+                    willBlunder = Math.random() < 0.05;
+                }
+                
+                if (willBlunder) {
+                    // Pilih angka terendah sebagai blunder
+                    selectedNumber = Math.min(...availableNumbers);
+                    addGameLog(`${gameState.playerPickingNow} membuat kesalahan (blunder)!`);
+                    
+                    // Beri efek visual blunder
+                    setTimeout(() => {
+                        const numberElement = document.querySelector(
+                            `.number[data-team="${team}"][data-number="${selectedNumber}"]`
+                        );
+                        if (numberElement) {
+                            numberElement.classList.add('blunder');
+                            setTimeout(() => {
+                                numberElement.classList.remove('blunder');
+                            }, 1000);
+                        }
+                    }, 500);
+                } else {
+                    // Strategi normal berdasarkan momentum
+                    if (isLosingTeam) {
+                        // Strategi agresif untuk tim yang tertinggal
+                        // 70% pilih angka terbesar, 30% pilih angka terbesar kedua
+                        selectedNumber = Math.random() < 0.7 ? availableNumbers[0] : 
+                                         (availableNumbers.length > 1 ? availableNumbers[1] : availableNumbers[0]);
+                        
+                        // Jika masih tertinggal jauh, lebih agresif lagi
+                        const scoreDiff = Math.abs(gameState.teamAScore - gameState.teamBScore);
+                        if (scoreDiff >= 4 && availableNumbers.length > 2) {
+                            selectedNumber = availableNumbers[0]; // Selalu pilih yang terbesar
+                        }
+                    } 
+                    else if (momentum >= 1) {
+                        // Tim dengan momentum tinggi lebih agresif
+                        // 80% pilih angka terbesar, 20% pilih angka terbesar kedua
+                        selectedNumber = Math.random() < 0.8 ? availableNumbers[0] : 
+                                         (availableNumbers.length > 1 ? availableNumbers[1] : availableNumbers[0]);
+                    } 
+                    else if (momentum <= -1) {
+                        // Tim dengan momentum rendah lebih defensif
+                        // Pilih angka tengah untuk menghindari kekalahan besar
+                        const midIndex = Math.floor(availableNumbers.length / 2);
+                        selectedNumber = availableNumbers[midIndex];
+                        
+                        // 40% chance untuk memilih angka lebih besar dari tengah
+                        if (Math.random() < 0.4 && midIndex > 0) {
+                            selectedNumber = availableNumbers[midIndex - 1];
+                        }
+                    } 
+                    else {
+                        // Strategi standar dengan variasi
+                        // 60% pilih angka terbesar, 30% pilih angka terbesar kedua, 10% pilih acak
+                        const rand = Math.random();
+                        if (rand < 0.6) {
+                            selectedNumber = availableNumbers[0];
+                        } else if (rand < 0.9 && availableNumbers.length > 1) {
+                            selectedNumber = availableNumbers[1];
+                        } else {
+                            selectedNumber = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+                        }
+                    }
+                }
+            } else {
+                // Jika tidak ada angka tersedia, pilih 0
+                selectedNumber = 0;
+                addGameLog(`Bot ${team === 'A' ? gameState.teamAName : gameState.teamBName} tidak menemukan angka yang tersedia. Memilih 0.`);
+            }
+            
+            // Simpan pilihan bot
+            const playerOrderIndex = gameState.currentTurnPlayerIndex;
+            const originalPlayerIndex = gameState.currentPlayerOrder[team][playerOrderIndex];
+            if (team === 'A') {
+                gameState.teamAPicks[originalPlayerIndex] = selectedNumber;
+                gameState.playerStats.A[originalPlayerIndex].totalNumbers += selectedNumber;
+            } else {
+                gameState.teamBPicks[originalPlayerIndex] = selectedNumber;
+                gameState.playerStats.B[originalPlayerIndex].totalNumbers += selectedNumber;
+            }
+            
+            // Tampilkan pilihan bot
+            document.getElementById(`team${team}Player${originalPlayerIndex}Pick`).textContent = selectedNumber;
+            
+            // Jika memilih angka (bukan 0), tandai sebagai digunakan
+            if (selectedNumber !== 0) {
+                markNumberAsUsed(selectedNumber);
+                
+                // Beri highlight visual
+                const numberElement = document.querySelector(
+                    `.number[data-team="${team}"][data-number="${selectedNumber}"]`
+                );
+                if (numberElement) {
+                    numberElement.classList.add('highlight');
+                    setTimeout(() => {
+                        numberElement.classList.remove('highlight');
+                    }, 500);
+                }
+            }
+            
+            addGameLog(`${gameState.playerPickingNow} memilih angka ${selectedNumber}`);
+            
+            // Lanjut ke giliran berikutnya setelah jeda 1 detik
+            setTimeout(() => {
+                nextTurn();
+            }, 1000);
+        }
+
+        // Pindah ke giliran berikutnya
+        function nextTurn() {
+            gameState.picksTakenInRound++;
+            
+            if (gameState.picksTakenInRound >= gameState.totalPicksPerRound) {
+                calculateRoundWinner();
+                return;
+            }
+            
+            // Tentukan giliran berikutnya
+            if (gameState.currentTurnTeam === 'A') {
+                // Jika Team A baru saja memilih, ganti ke Team B
+                gameState.currentTurnTeam = 'B';
+                // Tetap di pemain yang sama (index tidak berubah)
+            } else {
+                // Jika Team B baru saja memilih, ganti ke Team A
+                gameState.currentTurnTeam = 'A';
+                // Pindah ke pemain berikutnya di Team A
+                gameState.currentTurnPlayerIndex = (gameState.currentTurnPlayerIndex + 1) % 4;
+            }
+            
+            startTurn();
+        }
+
+        // Hitung pemenang ronde
+        function calculateRoundWinner() {
+            const teamATotal = gameState.teamAPicks.reduce((sum, num) => sum + (num || 0), 0);
+            const teamBTotal = gameState.teamBPicks.reduce((sum, num) => sum + (num || 0), 0);
+            
+            gameState.roundActive = false;
+            clearInterval(gameState.timerInterval);
+            
+            document.getElementById('teamATotal').textContent = `Total: ${teamATotal}`;
+            document.getElementById('teamBTotal').textContent = `Total: ${teamBTotal}`;
+            
+            // Update total poin keseluruhan dengan sistem bonus untuk tim yang tertinggal
+            const scoreDiffBefore = gameState.teamAScore - gameState.teamBScore;
+            
+            // Hitung bonus untuk tim yang kalah (jika ada)
+            let bonusA = 0, bonusB = 0;
+            if (scoreDiffBefore > 2 && teamATotal < teamBTotal) {
+                // Team B menang saat tertinggal, dapat bonus
+                bonusB = Math.floor(teamBTotal * 0.2);
+                addGameLog(`${gameState.teamBName} mendapatkan bonus ${bonusB} poin karena menang saat tertinggal!`);
+            } else if (scoreDiffBefore < -2 && teamBTotal < teamATotal) {
+                // Team A menang saat tertinggal, dapat bonus
+                bonusA = Math.floor(teamATotal * 0.2);
+                addGameLog(`${gameState.teamAName} mendapatkan bonus ${bonusA} poin karena menang saat tertinggal!`);
+            }
+            
+            gameState.teamATotalPoints += teamATotal + bonusA;
+            gameState.teamBTotalPoints += teamBTotal + bonusB;
+            
+            document.getElementById('teamATotalPoints').textContent = `Total Poin: ${gameState.teamATotalPoints}`;
+            document.getElementById('teamBTotalPoints').textContent = `Total Poin: ${gameState.teamBTotalPoints}`;
+
+            if (teamATotal > teamBTotal) {
+                gameState.teamAScore++;
+                gameState.consecutiveWins.A++;
+                gameState.consecutiveWins.B = 0;
+                document.getElementById('teamAScore').textContent = gameState.teamAScore;
+                addGameLog(`${gameState.teamAName} menang Ronde ${gameState.currentRound}! (${teamATotal} vs ${teamBTotal})`);
+                gameState.lastRoundWinner = 'A';
+            } else if (teamBTotal > teamATotal) {
+                gameState.teamBScore++;
+                gameState.consecutiveWins.B++;
+                gameState.consecutiveWins.A = 0;
+                document.getElementById('teamBScore').textContent = gameState.teamBScore;
+                addGameLog(`${gameState.teamBName} menang Ronde ${gameState.currentRound}! (${teamBTotal} vs ${teamATotal})`);
+                gameState.lastRoundWinner = 'B';
+            } else {
+                addGameLog(`Ronde ${gameState.currentRound} seri! (${teamATotal} vs ${teamBTotal})`);
+                gameState.lastRoundWinner = null;
+                addGameLog(`Mengulang ronde dengan angka baru...`);
+                prepareRound(); // Ulang ronde dengan angka baru
+                return;
+            }
+            
+            document.getElementById('nextRoundBtn').disabled = false;
+            updatePauseButton();
+            
+            // Cek apakah sudah ada pemenang (hanya jika benar-benar tidak bisa dikejar)
+            const roundsLeft = gameState.maxRounds - gameState.currentRound;
+            const scoreDiff = Math.abs(gameState.teamAScore - gameState.teamBScore);
+            
+            // Hanya akhiri permainan jika benar-benar tidak mungkin untuk mengejar
+            if (scoreDiff > roundsLeft + 1) {
+                if (gameState.teamAScore > gameState.teamBScore) {
+                    showWinnerModal(`${gameState.teamAName} memenangkan permainan karena poin tidak bisa dikejar!`);
+                } else {
+                    showWinnerModal(`${gameState.teamBName} memenangkan permainan karena poin tidak bisa dikejar!`);
+                }
+                return;
+            }
+            
+            if (gameState.currentRound >= gameState.maxRounds) {
+                setTimeout(showFinalResults, 1000);
+            }
+        }
+
+        // Pindah ke ronde berikutnya
+        function nextRound() {
+            gameState.currentRound++;
+            
+            if (gameState.currentRound <= gameState.maxRounds) {
+                prepareRound();
+            } else {
+                showFinalResults();
+            }
+        }
+
+        // Tampilkan hasil akhir
+        function showFinalResults() {
+            let message = '';
+            if (gameState.teamAScore > gameState.teamBScore) {
+                message = `${gameState.teamAName} Menang! (${gameState.teamAScore}-${gameState.teamBScore})`;
+                if (gameState.playerTeam === 'A') message += ' SELAMAT!';
+            } else if (gameState.teamBScore > gameState.teamAScore) {
+                message = `${gameState.teamBName} Menang! (${gameState.teamBScore}-${gameState.teamAScore})`;
+                if (gameState.playerTeam === 'B') message += ' SELAMAT!';
+            } else {
+                message = `Seri! (${gameState.teamAScore}-${gameState.teamBScore})`;
+            }
+            
+            showWinnerModal(message);
+        }
+
+        // Tampilkan leaderboard
+        function showLeaderboard() {
+            // Gabungkan semua pemain dari kedua tim
+            const allPlayers = [
+                ...gameState.playerStats.A.map(player => ({ ...player, team: gameState.teamAName })),
+                ...gameState.playerStats.B.map(player => ({ ...player, team: gameState.teamBName }))
+            ];
+            
+            // Urutkan berdasarkan total angka (descending)
+            allPlayers.sort((a, b) => b.totalNumbers - a.totalNumbers);
+            
+            // Tampilkan leaderboard
+            const leaderboardBody = document.getElementById('leaderboardBody');
+            leaderboardBody.innerHTML = '';
+            
+            allPlayers.forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                const rankCell = document.createElement('td');
+                rankCell.textContent = index + 1;
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = player.name;
+                if (index === 0) {
+                    const mvpBadge = document.createElement('span');
+                    mvpBadge.className = 'mvp-badge';
+                    mvpBadge.textContent = 'MVP';
+                    nameCell.appendChild(mvpBadge);
+                }
+                
+                const teamCell = document.createElement('td');
+                teamCell.textContent = player.team;
+                
+                const totalCell = document.createElement('td');
+                totalCell.textContent = player.totalNumbers;
+                
+                row.appendChild(rankCell);
+                row.appendChild(nameCell);
+                row.appendChild(teamCell);
+                row.appendChild(totalCell);
+                
+                leaderboardBody.appendChild(row);
+            });
+            
+            document.getElementById('leaderboard').style.display = 'block';
+            document.getElementById('winnerModal').style.display = 'none';
+        }
+
+        // Tampilkan modal pemenang
+        function showWinnerModal(message) {
+            const modal = document.getElementById('winnerModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            
+            if (message.includes(gameState.teamAName)) {
+                modalTitle.textContent = `${gameState.teamAName} Menang!`;
+                modalTitle.style.color = '#5c6bc0';
+            } else if (message.includes(gameState.teamBName)) {
+                modalTitle.textContent = `${gameState.teamBName} Menang!`;
+                modalTitle.style.color = '#9c27b0';
+            } else {
+                modalTitle.textContent = 'Permainan Berakhir!';
+                modalTitle.style.color = '#4caf50';
+            }
+            
+            modalMessage.textContent = message;
+            modal.style.display = 'flex';
+        }
+
+        // Tutup modal
+        function closeModal() {
+            document.getElementById('winnerModal').style.display = 'none';
+        }
+
+        // Timer untuk pemain manusia
+        function startPlayerSelectionTimer() {
+            resetTimer();
+            gameState.timer = 6;
+            updateTimerDisplay();
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                updateTimerDisplay();
+                
+                if (gameState.timer <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    addGameLog('Waktu habis! Memilih angka 0 secara otomatis.');
+                    gameState.currentSelection = 0;
+                    confirmSelection();
+                }
+            }, 1000);
+        }
+
+        // Reset timer
+        function resetTimer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+            }
+            gameState.timer = 6;
+            updateTimerDisplay();
+        }
+        
+        // Reset ban timer
+        function resetBanTimer() {
+            if (gameState.banTimerInterval) {
+                clearInterval(gameState.banTimerInterval);
+            }
+            gameState.banTimer = 6;
+            updateBanTimerDisplay();
+        }
+
+        // Update tampilan timer
+        function updateTimerDisplay() {
+            const timer = document.getElementById('timer');
+            const seconds = gameState.timer.toString().padStart(2, '0');
+            timer.textContent = `00:${seconds}`;
+            timer.style.color = gameState.timer <= 3 ? '#f44336' : '#ff9800';
+        }
+        
+        // Update tampilan ban timer
+        function updateBanTimerDisplay() {
+            const banTimer = document.getElementById('banTimer');
+            const seconds = gameState.banTimer.toString().padStart(2, '0');
+            banTimer.textContent = `00:${seconds}`;
+            banTimer.style.color = gameState.banTimer <= 3 ? '#f44336' : '#ff9800';
+        }
+
+        // Tambahkan log permainan
+        function addGameLog(message) {
+            const log = document.getElementById('gameLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = message;
+            log.prepend(entry);
+            log.scrollTop = 0;
+        }
+        
+        // Kembali ke lobby
+        function backToLobby() {
+            if (confirm('Apakah Anda yakin ingin kembali ke lobby? Semua progress akan hilang.')) {
+                document.getElementById('gameScreen').style.display = 'none';
+                document.getElementById('startScreen').style.display = 'block';
+                resetGameState();
+            }
+        }
+        
+        // Reset state permainan
+        function resetGameState() {
+            // Reset semua variabel gameState ke nilai awal
+            gameState.playerName = '';
+            gameState.playerTeam = '';
+            gameState.currentRound = 1;
+            gameState.teamAScore = 0;
+            gameState.teamBScore = 0;
+            gameState.teamATotalPoints = 0;
+            gameState.teamBTotalPoints = 0;
+            gameState.roundNumbers = [];
+            gameState.bannedNumbers = [];
+            gameState.teamAPicks = new Array(4).fill(null);
+            gameState.teamBPicks = new Array(4).fill(null);
+            gameState.selectedNumbers.clear();
+            gameState.currentSelection = null;
+            gameState.gameStarted = false;
+            gameState.roundActive = false;
+            gameState.banPhase = false;
+            gameState.timer = 6;
+            gameState.banTimer = 6;
+            gameState.pauseTime = 10;
+            gameState.pauseRequestTime = 5;
+            gameState.timerInterval = null;
+            gameState.banTimerInterval = null;
+            gameState.pauseTimerInterval = null;
+            gameState.pauseRequestTimerInterval = null;
+            gameState.currentTurnTeam = null;
+            gameState.currentTurnPlayerIndex = 0;
+            gameState.picksTakenInRound = 0;
+            gameState.players = { A: [], B: [] };
+            gameState.playerPickingNow = null;
+            gameState.lastRoundWinner = null;
+            gameState.currentPlayerOrder = { A: [], B: [] };
+            gameState.customGame = false;
+            gameState.watchMode = false;
+            gameState.teamAName = 'Team A';
+            gameState.teamBName = 'Team B';
+            gameState.teamAMomentum = 0;
+            gameState.teamBMomentum = 0;
+            gameState.consecutiveWins = { A: 0, B: 0 };
+            gameState.catchUpMode = false;
+            gameState.firstPickTeam = null;
+            gameState.playerStats = { A: [], B: [] };
+            gameState.pauseCount = { A: 2, B: 2 };
+            gameState.isPaused = false;
+            gameState.pauseRequested = false;
+            gameState.pauseRequestTeam = null;
+
+            // Reset input form di custom room
+            document.getElementById('teamAName').value = 'Team A';
+            document.getElementById('teamBName').value = 'Team B';
+            document.getElementById('teamAPlayer1').value = 'Player A1';
+            document.getElementById('teamAPlayer2').value = 'Player A2';
+            document.getElementById('teamAPlayer3').value = 'Player A3';
+            document.getElementById('teamAPlayer4').value = 'Player A4';
+            document.getElementById('teamBPlayer1').value = 'Player B1';
+            document.getElementById('teamBPlayer2').value = 'Player B2';
+            document.getElementById('teamBPlayer3').value = 'Player B3';
+            document.getElementById('teamBPlayer4').value = 'Player B4';
+            document.getElementById('playerName').value = '';
+
+            // Update tampilan nama tim ke default
+            document.getElementById('teamADisplay').textContent = gameState.teamAName;
+            document.getElementById('teamBDisplay').textContent = gameState.teamBName;
+            document.getElementById('teamATitleDisplay').textContent = gameState.teamAName;
+            document.getElementById('teamBTitleDisplay').textContent = gameState.teamBName;
+            document.getElementById('numbersTeamATitle').textContent = `Angka ${gameState.teamAName}`;
+            document.getElementById('numbersTeamBTitle').textContent = `Angka ${gameState.teamBName}`;
+
+            // Kembali ke tab normal game
+            openTab('normalTab');
+        }
+    </script>
+</body>
+</html>
